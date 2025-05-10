@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Metrics Dashboard</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>System Metrics Dashboard</h1>
+        
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <h2>CPU Usage</h2>
+                <div class="metric-value" id="cpu-usage">0%</div>
+                <div class="metric-details" id="cpu-cores"></div>
+            </div>
+
+            <div class="metric-card">
+                <h2>Memory Usage</h2>
+                <div class="metric-value" id="memory-usage">0%</div>
+                <div class="metric-details">
+                    <div>Total: <span id="memory-total">0</span> GB</div>
+                    <div>Used: <span id="memory-used">0</span> GB</div>
+                    <div>Free: <span id="memory-free">0</span> GB</div>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <h2>GPU Status</h2>
+                <div id="gpu-info"></div>
+            </div>
+        </div>
+    </div>
+    <script src="/js/main.js"></script>
+</body>
+</html> 
