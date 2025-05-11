@@ -109,7 +109,7 @@ export class KohyaQueue {
     const kohya = spawn(command, args);
 
     kohya.stdout.on('data', (data) => {
-      this.#log = data;
+      this.#log = data.toString();
     });
 
     kohya.on('error', (error) => {
