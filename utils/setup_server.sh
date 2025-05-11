@@ -79,6 +79,12 @@ print_message "Creating working directory..."
 mkdir -p /home/flux
 cd /home/flux
 
+# Install Server
+print_message "Installing Server..."
+git clone https://github.com/Alberto-Arias-x64/server-template server
+cd server
+npm install
+
 # Setup ComfyUI
 print_message "Setting up ComfyUI..."
 chmod +x utils/setup_comfy.sh
@@ -108,6 +114,7 @@ curl -L -O https://huggingface.co/Comfy-Org/flux1-dev/resolve/main/flux1-dev-fp8
 #  Install Nvtop
 print_message "Installing Nvtop..."
 sudo apt install nvtop
+
 
 print_warning "Please reboot your system."
 print_message "Installation complete!"
