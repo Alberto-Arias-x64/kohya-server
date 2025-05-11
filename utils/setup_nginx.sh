@@ -63,7 +63,7 @@ if [ $? -eq 0 ]; then
 
     # Check Nginx status
     print_message "Checking Nginx status..."
-    systemctl status nginx
+    systemctl is-active nginx
 
     print_message "Installation completed successfully!"
     print_message "Your Express server is now available at:"
@@ -74,6 +74,12 @@ else
     print_error "Nginx configuration has errors. Please check the logs."
     exit 1
 fi
+
+# Enable firewall
+print_message "Enabling firewall..."
+ufw allow 'Nginx Full'
+ufw enable
+sudo ufw status
 
 # Show port information
 print_message "Checking used ports..."
