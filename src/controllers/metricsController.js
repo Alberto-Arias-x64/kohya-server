@@ -1,7 +1,10 @@
 import { config } from '../config/config.js';
 import { Logger } from '../utils/Logger.js';
+import { exec } from 'child_process';
 import si from 'systeminformation';
+import { promisify } from 'util';
 
+const execAsync = promisify(exec);
 const logger = Logger.getInstance();
 
 export const getSystemMetrics = async (req, res) => {
@@ -17,11 +20,21 @@ export const getSystemMetrics = async (req, res) => {
   let isClientConnected = true;
   let interval;
 
+  const getNvidiaInfo = async () => {
+    try {
+      const { stdout } = await execAsync('nvitop --json');
+      return JSON.parse(stdout);
+    } catch (error) {
+      logger.error('Error fetching NVIDIA info', { message: error.message });
+      return null;
+    }
+  };
+
   const sendMetrics = async () => {
     if (!isClientConnected) return;
 
     try {
-      const [cpu, mem, gpu, gpuLoad] = await Promise.all([
+      const [cpu, mem, gpu, gpuLoad, nvidiaInfo] = await Promise.all([
         si.currentLoad(),
         si.mem(),
         si.graphics(),
@@ -36,7 +49,8 @@ export const getSystemMetrics = async (req, res) => {
             }
           }
           return loads;
-        })
+        }),
+        getNvidiaInfo()
       ]);
 
       const metrics = {
@@ -50,16 +64,20 @@ export const getSystemMetrics = async (req, res) => {
           free: (mem.free / (1024 * 1024 * 1024)).toFixed(2),
           usage: ((mem.used / mem.total) * 100).toFixed(2)
         },
-        gpu: gpu.controllers.map((gpu, index) => ({
-          model: gpu.model,
-          vram: gpu.vram ? (gpu.vram / 1024).toFixed(2) : 'N/A',
-          temperature: gpu.temperatureGpu || 'N/A',
-          load: gpuLoad[index]?.load || 'N/A',
-          memoryUsed: gpuLoad[index]?.memoryUsed || 'N/A',
-          memoryTotal: gpuLoad[index]?.memoryTotal || 'N/A',
-          powerDraw: gpuLoad[index]?.powerDraw || 'N/A',
-          fanSpeed: gpuLoad[index]?.fanSpeed || 'N/A'
-        }))
+        gpu: gpu.controllers.map((gpu, index) => {
+          const nvidiaGpu = nvidiaInfo?.gpus?.[index] || {};
+          return {
+            model: gpu.model,
+            vram: gpu.vram ? (gpu.vram / 1024).toFixed(2) : 'N/A',
+            temperature: nvidiaGpu.temperature || gpu.temperatureGpu || 'N/A',
+            load: nvidiaGpu.gpu_util || gpuLoad[index]?.load || 'N/A',
+            memoryUsed: nvidiaGpu.memory_used || gpuLoad[index]?.memoryUsed || 'N/A',
+            memoryTotal: nvidiaGpu.memory_total || gpuLoad[index]?.memoryTotal || 'N/A',
+            powerDraw: nvidiaGpu.power_draw || gpuLoad[index]?.powerDraw || 'N/A',
+            fanSpeed: nvidiaGpu.fan_speed || gpuLoad[index]?.fanSpeed || 'N/A',
+            processes: nvidiaGpu.processes || []
+          };
+        })
       };
 
       res.write(`data: ${JSON.stringify(metrics)}\n\n`);
