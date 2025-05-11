@@ -19,25 +19,12 @@ const maxReconnectAttempts = 5;
 const reconnectDelay = 3000;
 
 function clearForm() {
-  // Reset file input
   fileInput.value = '';
-  
-  // Clear validation message
   fileValidation.textContent = '';
-  
-  // Clear status message
   trainingStatus.textContent = '';
-  
-  // Clear task ID
   updateTaskId(null);
-  
-  // Reset button state
   trainButton.disabled = true;
-  
-  // Stop any ongoing polling
   stopTaskStatus();
-  
-  // Reset training ID
   trainingId = null;
 }
 
@@ -187,7 +174,7 @@ fileInput.addEventListener('change', (e) => {
 
 document.getElementById('train-form').addEventListener('submit', async (e) => {
   e.preventDefault();
-  
+
   const formData = new FormData(e.target);
   const files = fileInput.files;
   
@@ -196,6 +183,8 @@ document.getElementById('train-form').addEventListener('submit', async (e) => {
   trainButton.disabled = true;
   trainingStatus.textContent = 'Uploading files...';
   updateTaskId(null);
+
+  stopTaskStatus();
   
   try {
     const uploadResponse = await fetch('/api/upload', {

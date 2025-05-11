@@ -4,6 +4,7 @@ import uuid from 'short-uuid'
 const logger = Logger.getInstance();
 
 export const requestLogger = async (req, res, next) => {
+  if (req.url.includes('/api/kohya/taskInfo')) return next();
   const startTime = Date.now();
   const requestId = uuid.generate();
 
