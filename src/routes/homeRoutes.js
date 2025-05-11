@@ -1,8 +1,8 @@
 import { Router } from 'express';
-import { welcome, status } from '../controllers/homeController.js';
+import { status } from '../controllers/homeController.js';
 
 const router = Router();
 
-router.get('/api/status', status);
+router.get('/status', status);
 
-export default router; 
+export default router;

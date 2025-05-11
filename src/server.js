@@ -1,22 +1,21 @@
 import { securityMiddleware } from './middleware/security.js';
-import homeRoutes from './routes/homeRoutes.js';
-import metricsRoutes from './routes/metricsRoutes.js';
-import { config } from './config/config.js';
-import { dirname, join } from 'path';
-import { fileURLToPath } from 'url';
+import { config, paths } from './config/config.js';
+import routes from './routes/indexRoute.js';
+import { Logger } from './utils/Logger.js';
 import express from 'express';
+import { join } from 'path';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+const logger = Logger.getInstance();
 
 const app = express();
 
-app.use(express.json({ limit: '10mb', extended: true }));
-app.use(express.static(join(__dirname, 'public')));
 app.use(securityMiddleware);
-app.use(homeRoutes);
-app.use(metricsRoutes);
+app.use(express.json({ limit: config.maxFileSize, extended: true }));
+app.use(express.static(join(paths.basePath, 'public')));
+app.use(routes);
 
 app.listen(config.port, () => {
+  console.log(paths.basePath);
   console.log(`Server is running on http://localhost:${config.port}`);
+  logger.info(`Server is running on http://localhost:${config.port}`);
 });
