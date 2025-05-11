@@ -1,3 +1,3 @@
 export const status = (_req, res) => {
-  res.json({ status: 'OK' });
+  return res.json({ status: 'OK' });
 }; 

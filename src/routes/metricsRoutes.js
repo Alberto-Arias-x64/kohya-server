@@ -1,5 +1,5 @@
-import { Router } from 'express';
 import { getSystemMetrics } from '../controllers/metricsController.js';
+import { Router } from 'express';
 
 const router = Router();
 

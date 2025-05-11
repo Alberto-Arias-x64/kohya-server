@@ -2,16 +2,16 @@ import { exec } from 'child_process';
 import uid from 'short-uuid';
 
 export const status = (_req, res) => {
-  res.json({ status: 'OK' });
+  return res.json({ status: 'OK' });
 };
 
 export const models = (_req, res) => {
-  res.json({ models: ['flux1-dev', 'flux1-dev-fp8', 'flux1-dev-fp16'] });
+  return res.json({ models: ['flux1-dev', 'flux1-dev-fp8', 'flux1-dev-fp16'] });
 };
 
 export const generate = (req, res) => {
   const body = req.body;
   if (!body.model || !body.prompt) return res.status(400).json({ error: 'Model and prompt are required' });
   const uuid = uid.generate();
-  res.json({ status: 'OK', id: uuid });
+  return res.json({ status: 'OK', id: uuid });
 };

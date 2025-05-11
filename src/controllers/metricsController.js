@@ -1,10 +1,18 @@
+import { config } from '../config/config.js';
+import { Logger } from '../utils/Logger.js';
 import si from 'systeminformation';
 
+const logger = Logger.getInstance();
+
 export const getSystemMetrics = async (req, res) => {
+  const allowedOrigins = config.allowedOrigins;
+  const origin = req.headers.origin;
+
   res.setHeader('Content-Type', 'text/event-stream');
   res.setHeader('Cache-Control', 'no-cache');
   res.setHeader('Connection', 'keep-alive');
-  res.setHeader('Access-Control-Allow-Origin', '*');
+
+  if (allowedOrigins.includes(origin)) res.setHeader('Access-Control-Allow-Origin', origin);
 
   let isClientConnected = true;
   let interval;
@@ -56,7 +64,7 @@ export const getSystemMetrics = async (req, res) => {
 
       res.write(`data: ${JSON.stringify(metrics)}\n\n`);
     } catch (error) {
-      console.error('Error fetching metrics:', error);
+      logger.error('Error fetching metrics', { message: error.message, stack: error.stack });
       res.write(`data: ${JSON.stringify({ error: 'Error fetching metrics' })}\n\n`);
     }
   };
