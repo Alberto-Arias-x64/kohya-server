@@ -38,9 +38,9 @@ export const taskInfo = async (req, res) => {
     
     try {
       await fs.access(join(paths.datasetsPath, id));
-      return res.json({ info: { status: 'COMPLETED', position: -1 } });
+      return res.json({ info: { status: 'COMPLETED', position: -1, log: 'Dataset found' } });
     } catch {
-      return res.json({ info: { status: 'NOT_FOUND', position: -1 } });
+      return res.json({ info: { status: 'NOT_FOUND', position: -1, log: 'Dataset not found' } });
     }
   } catch (error) {
     logger.error("Error getting task info", { error: error.message, stack: error.stack });

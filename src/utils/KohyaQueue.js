@@ -22,6 +22,7 @@ export const QueueStatus = {
 export class KohyaQueue {
   static instance = new KohyaQueue();
   #status = QueueStatus.IDLE;
+  #log = '';
 
   constructor() {
     this.queue = [];
@@ -47,7 +48,8 @@ export class KohyaQueue {
     if (!task) return null;
     return {
       status: task.status,
-      position: position
+      position: position,
+      log: this.#log
     };
   }
 
@@ -104,18 +106,22 @@ export class KohyaQueue {
       join(path, 'config.toml')
     ];
 
-    // const kohya = spawn(command, args);
+    const kohya = spawn(command, args);
 
-    // kohya.on('error', (error) => {
-    //   logger.error(`Task ${id} failed`, { error: error.message, stack: error.stack });
-    //   task.status = TaskStatus.FAILED;
-    //   task.updatedAt = new Date();
-    // });
+    kohya.stdout.on('data', (data) => {
+      this.#log = data;
+    });
 
-    // kohya.on('close', (code) => {
-    //   logger.info(`Task ${id} closed with code ${code}`);
-    //   task.status = TaskStatus.COMPLETED;
-    //   task.updatedAt = new Date();
-    // });
+    kohya.on('error', (error) => {
+      logger.error(`Task ${id} failed`, { error: error.message, stack: error.stack });
+      task.status = TaskStatus.FAILED;
+      task.updatedAt = new Date();
+    });
+
+    kohya.on('close', (code) => {
+      logger.info(`Task ${id} closed with code ${code}`);
+      task.status = TaskStatus.COMPLETED;
+      task.updatedAt = new Date();
+    });
   }
 } 

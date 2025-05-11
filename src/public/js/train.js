@@ -135,7 +135,7 @@ async function checkTask() {
     if (!response.ok) throw new Error('Failed to check task status');
     
     const data = await response.json();
-    trainingStatus.textContent = `Current task status: ${data.info.status}`;
+    trainingStatus.innerHTML = `Current task status: ${data.info.status}<br><span style='font-size:0.9em;color:#888;'>${data.info.log || ''}</span>`;
     
     if (data.info.status === 'COMPLETED' || data.info.status === 'FAILED') {
       clearInterval(pollingInterval);
