@@ -17,9 +17,9 @@ export const config = {
 
 export const paths = {
   basePath,
-  comfyPath: join(basePath, '..', 'ComfyUI'),
-  kohyaPath: join(basePath, '..', 'kohya_ss'),
-  datasetsPath: join(basePath, '..', 'datasets'),
+  comfyPath: join(basePath, '..', '..', 'ComfyUI'),
+  kohyaPath: join(basePath, '..', '..', 'kohya_ss'),
+  datasetsPath: join(basePath, '..', '..', 'datasets'),
   utilsPath: join(basePath, '..', 'utils'),
-  logsPath: join(basePath,'logs')
+  logsPath: join(basePath, 'logs')
 };
