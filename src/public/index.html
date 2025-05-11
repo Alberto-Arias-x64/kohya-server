@@ -11,14 +11,33 @@
 <body>
     <div class="container">
       <h2>Train model</h2>
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <h2>Queue Status</h2>
+          <div class="metric-value" id="queue-status-value">-</div>
+          <div class="metric-details">
+              <div>Pending Tasks: <span id="queue-pending-tasks">0</span></div>
+              <div>Current Task: <span id="queue-current-task">-</span></div>
+          </div>
+      </div>
 
-      <form id="train-form">
-        <div>
-          <label for="photos">Photos</label>
-          <input type="file" multiple accept="image/*" id="photos" name="photos" placeholder="Photos">
-        </div>
-        <button type="submit">Train</button>
-      </form>
+      <div class="metric-card train-card">
+          <h2>Train Model</h2>
+          <form id="train-form">
+              <div class="form-group">
+                  <label for="photos">Photos (max 10 images)</label>
+                  <input type="file" multiple accept="image/*" id="photos" name="photos" placeholder="Photos">
+                  <div id="file-validation" class="validation-message"></div>
+              </div>
+              <div id="training-status" class="status-message"></div>
+              <div id="task-id" class="task-id"></div>
+              <div class="button-group">
+                <button type="submit" id="train-button" disabled>Train</button>
+                <button type="button" id="clear-button">Clear</button>
+              </div>
+          </form>
+      </div>
+      </div>
     </div>
     <div class="container">
         <h2>System Metrics Dashboard</h2>

@@ -20,6 +20,6 @@ export const paths = {
   comfyPath: join(basePath, '..', 'ComfyUI'),
   kohyaPath: join(basePath, '..', 'kohya_ss'),
   datasetsPath: join(basePath, '..', 'datasets'),
-  utilsPath: join(basePath, 'utils'),
+  utilsPath: join(basePath, '..', 'utils'),
   logsPath: join(basePath,'logs')
 };

@@ -77,14 +77,12 @@ export const getSystemMetrics = async (req, res) => {
 
   // Handle client disconnect
   req.on('close', () => {
-    console.log('Client disconnected');
     isClientConnected = false;
     clearInterval(interval);
   });
 
   // Handle client errors
   req.on('error', (error) => {
-    console.error('SSE Error:', error);
     isClientConnected = false;
     clearInterval(interval);
   });

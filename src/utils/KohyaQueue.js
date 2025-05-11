@@ -1,6 +1,7 @@
 import { paths } from '../config/config.js';
 import { spawn } from 'child_process';
 import { Logger } from './Logger.js';
+import { join } from 'path';
 
 const logger = Logger.getInstance();
 
@@ -33,7 +34,11 @@ export class KohyaQueue {
   }
 
   get getStatus() {
-    return this.#status;
+    return {
+      status: this.#status,
+      queue: this.queue.length || 0,
+      currentTask: this.queue.at(-1)?.id || null
+    };
   }
 
   getTaskInfo(id) {
@@ -99,18 +104,18 @@ export class KohyaQueue {
       join(path, 'config.toml')
     ];
 
-    const kohya = spawn(command, args);
+    // const kohya = spawn(command, args);
 
-    kohya.on('error', (error) => {
-      logger.error(`Task ${id} failed`, { error: error.message, stack: error.stack });
-      task.status = TaskStatus.FAILED;
-      task.updatedAt = new Date();
-    });
+    // kohya.on('error', (error) => {
+    //   logger.error(`Task ${id} failed`, { error: error.message, stack: error.stack });
+    //   task.status = TaskStatus.FAILED;
+    //   task.updatedAt = new Date();
+    // });
 
-    kohya.on('close', (code) => {
-      logger.info(`Task ${id} closed with code ${code}`);
-      task.status = TaskStatus.COMPLETED;
-      task.updatedAt = new Date();
-    });
+    // kohya.on('close', (code) => {
+    //   logger.info(`Task ${id} closed with code ${code}`);
+    //   task.status = TaskStatus.COMPLETED;
+    //   task.updatedAt = new Date();
+    // });
   }
 } 

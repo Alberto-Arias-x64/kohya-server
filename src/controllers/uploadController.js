@@ -21,21 +21,26 @@ export const uploadImages = (req, res) => {
       await fs.mkdir(inputDir, { recursive: true });
       await fs.mkdir(join(paths.datasetsPath, id, 'output'), { recursive: true });
 
-      files.photos.forEach(async (file, index) => {
-        if (!(/\.(jpe?g|png|webp|bmp|tiff)$/i.test(file.originalFilename))) return;
+      const processPromises = files.photos.map(async (file, index) => {
+        if (!(/\.(jpe?g|png|webp|bmp|tiff)$/i.test(file.originalFilename))) {
+          logger.warn('Invalid file type skipped', { filename: file.originalFilename });
+          return;
+        }
+
         try {
           await sharp(file.filepath)
             .resize(1024, 1024, { fit: 'cover' })
             .png()
             .toFile(join(inputDir, `${index + 1}.png`));
           await fs.writeFile(join(inputDir, `${index + 1}.txt`), id, 'utf8');
-          await fs.unlink(file.filepath);
+          //await fs.unlink(file.filepath);
           logger.info('Processed image', { id, index: index + 1 });
         } catch (err) {
-          logger.error(`Error processing image`, { error: err.message, stack: err.stack , id });
+          logger.error(`Error processing image`, { error: err.message, stack: err.stack, id });
         }
       });
 
+      await Promise.all(processPromises);
       return res.json({ id });
     });
   } catch (error) {

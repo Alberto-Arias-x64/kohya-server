@@ -1,33 +1,250 @@
-document.getElementById('train-form').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const formData = new FormData(e.target);
-  const data = Object.fromEntries(formData);
-  formData.append('photos', data.photos);
+const MAX_FILES = 10;
+const POLLING_INTERVAL = 5000; // 5 seconds
 
-  let id;
+const trainButton = document.getElementById('train-button');
+const clearButton = document.getElementById('clear-button');
+const fileInput = document.getElementById('photos');
+const fileValidation = document.getElementById('file-validation');
+const trainingStatus = document.getElementById('training-status');
+const queueStatusValue = document.getElementById('queue-status-value');
+const queuePendingTasks = document.getElementById('queue-pending-tasks');
+const queueCurrentTask = document.getElementById('queue-current-task');
+const taskIdElement = document.getElementById('task-id');
 
-  const uploadResponse = await fetch('/api/upload', {
-    method: 'POST',
-    body: formData,
-  });
+let trainingId = null;
+let pollingInterval = null;
+let eventSource = null;
+let reconnectAttempts = 0;
+const maxReconnectAttempts = 5;
+const reconnectDelay = 3000;
 
-  if (uploadResponse.ok) {
-    const data = await response.json();
-    id = data.id;
-  } else{
-    console.error('Failed to train model');
-    return
+function clearForm() {
+  // Reset file input
+  fileInput.value = '';
+  
+  // Clear validation message
+  fileValidation.textContent = '';
+  
+  // Clear status message
+  trainingStatus.textContent = '';
+  
+  // Clear task ID
+  updateTaskId(null);
+  
+  // Reset button state
+  trainButton.disabled = true;
+  
+  // Stop any ongoing polling
+  stopTaskStatus();
+  
+  // Reset training ID
+  trainingId = null;
+}
+
+function validateFiles(files) {
+  if (files.length === 0) {
+    fileValidation.textContent = 'Please select at least one image';
+    return false;
+  }
+  
+  if (files.length > MAX_FILES) {
+    fileValidation.textContent = `Maximum ${MAX_FILES} images allowed`;
+    return false;
   }
 
-  const trainResponse = await fetch(`/api/train`,{
-    method: 'POST',
-    body: JSON.stringify({ id }),
-  });
+  const invalidFiles = Array.from(files).filter(file => !file.type.startsWith('image/'));
+  if (invalidFiles.length > 0) {
+    fileValidation.textContent = 'Only image files are allowed';
+    return false;
+  }
 
-  if (trainResponse.ok) {
-    console.log('Training started');
+  fileValidation.textContent = '';
+  return true;
+}
+
+function updateButtonState() {
+  trainButton.disabled = fileInput.files.length === 0;
+}
+
+function updateQueueStatus(status, queue, currentTask) {
+  queueStatusValue.textContent = status;
+  queuePendingTasks.textContent = queue;
+  queueCurrentTask.textContent = currentTask || 'None';
+  
+  // Update color based on status
+  if (status === 'RUNNING') {
+    queueStatusValue.style.color = '#10B981'; // green
+  } else if (status === 'PAUSED') {
+    queueStatusValue.style.color = '#F59E0B'; // yellow
+  } else if (status === 'STOPPED') {
+    queueStatusValue.style.color = '#EF4444'; // red
   } else {
-    console.error('Failed to train model');
+    queueStatusValue.style.color = '#3B82F6'; // blue
+  }
+}
+
+function showQueueError() {
+  queueStatusValue.textContent = 'Connection Error';
+  queueStatusValue.style.color = '#EF4444';
+  queuePendingTasks.textContent = '-';
+  queueCurrentTask.textContent = 'Connection lost';
+}
+
+function updateTaskId(id) {
+  if (id) {
+    taskIdElement.textContent = `Task ID: ${id}`;
+    taskIdElement.style.display = 'block';
+  } else {
+    taskIdElement.textContent = '';
+    taskIdElement.style.display = 'none';
+  }
+}
+
+function listenQueueStatus() {
+  if (eventSource) {
+    eventSource.close();
+  }
+
+  eventSource = new EventSource('/api/kohya/status');
+  
+  eventSource.onmessage = (event) => {
+    const data = JSON.parse(event.data);
+    updateQueueStatus(data.status, data.queue, data.currentTask);
+    
+    // Reset reconnect attempts on successful connection
+    reconnectAttempts = 0;
+  };
+
+  eventSource.onerror = (error) => {
+    console.error('SSE Error:', error);
+    eventSource.close();
+
+    // Attempt to reconnect if under max attempts
+    if (reconnectAttempts < maxReconnectAttempts) {
+      reconnectAttempts++;
+      console.log(`Attempting to reconnect (${reconnectAttempts}/${maxReconnectAttempts})...`);
+      showQueueError();
+      setTimeout(listenQueueStatus, reconnectDelay);
+    } else {
+      console.error('Max reconnection attempts reached');
+      showQueueError();
+      queueCurrentTask.textContent = 'Please refresh the page to reconnect';
+    }
+  };
+}
+
+async function checkTask() {
+  if (!trainingId) return;
+
+  try {
+    const response = await fetch('/api/kohya/taskInfo', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ id: trainingId }),
+    });
+
+    if (!response.ok) throw new Error('Failed to check task status');
+    
+    const data = await response.json();
+    trainingStatus.textContent = `Current task status: ${data.info.status}`;
+    
+    if (data.info.status === 'COMPLETED' || data.info.status === 'FAILED') {
+      clearInterval(pollingInterval);
+      trainButton.disabled = false;
+    }
+  } catch (error) {
+    console.error('Error checking task status:', error);
+    clearInterval(pollingInterval);
+    trainingStatus.textContent = 'Error checking task status';
+  }
+}
+
+function checkTaskStatus() {
+  // Start task status polling if we have a training ID
+  if (trainingId) {
+    checkTask();
+    pollingInterval = setInterval(checkTask, POLLING_INTERVAL);
+  }
+}
+
+function stopTaskStatus() {
+  if (pollingInterval) {
+    clearInterval(pollingInterval);
+    pollingInterval = null;
+  }
+}
+
+fileInput.addEventListener('change', (e) => {
+  const files = e.target.files;
+  if (validateFiles(files)) {
+    updateButtonState();
+  } else {
+    trainButton.disabled = true;
   }
 });
 
+document.getElementById('train-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  
+  const formData = new FormData(e.target);
+  const files = fileInput.files;
+  
+  if (!validateFiles(files)) return;
+  
+  trainButton.disabled = true;
+  trainingStatus.textContent = 'Uploading files...';
+  updateTaskId(null);
+  
+  try {
+    const uploadResponse = await fetch('/api/upload', {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (!uploadResponse.ok) throw new Error('Upload failed');
+    
+    const uploadData = await uploadResponse.json();
+    trainingId = uploadData.id;
+    updateTaskId(trainingId);
+    
+    trainingStatus.textContent = 'Starting training...';
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    const trainResponse = await fetch('/api/kohya/train', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ id: trainingId }),
+    });
+
+    if (!trainResponse.ok) throw new Error('Training failed to start');
+    
+    trainingStatus.textContent = 'Training started';
+    checkTaskStatus();
+    
+  } catch (error) {
+    console.error('Error:', error);
+    trainingStatus.textContent = 'Error: ' + error.message;
+    trainButton.disabled = false;
+    stopTaskStatus();
+    updateTaskId(null);
+  }
+});
+
+// Handle page visibility changes
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') {
+    // Reconnect when page becomes visible again
+    reconnectAttempts = 0;
+    listenQueueStatus();
+  }
+});
+
+// Initial connection
+listenQueueStatus();
+
+// Add clear button event listener
+clearButton.addEventListener('click', clearForm);
