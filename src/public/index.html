@@ -5,11 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>System Metrics Dashboard</title>
     <link rel="stylesheet" href="/css/styles.css">
-    <script type="module" src="/js/main.js"></script>
+    <script type="module" src="/js/metrics.js"></script>
+    <script type="module" src="/js/train.js"></script>
 </head>
 <body>
     <div class="container">
-        <h1>System Metrics Dashboard</h1>
+      <h2>Train model</h2>
+
+      <form id="train-form">
+        <div>
+          <label for="photos">Photos</label>
+          <input type="file" multiple accept="image/*" id="photos" name="photos" placeholder="Photos">
+        </div>
+        <button type="submit">Train</button>
+      </form>
+    </div>
+    <div class="container">
+        <h2>System Metrics Dashboard</h2>
         
         <div class="metrics-grid">
             <div class="metric-card">

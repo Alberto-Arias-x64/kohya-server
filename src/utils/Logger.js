@@ -11,7 +11,7 @@ export const LogLevel = {
 };
 
 export class Logger {
-  static instance;
+  static instance = new Logger();
   #MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
   #MAX_FILES = 100;
 
@@ -20,9 +20,7 @@ export class Logger {
   }
 
   static getInstance() {
-    if (!Logger.instance) {
-      Logger.instance = new Logger();
-    }
+    if (!Logger.instance) Logger.instance = new Logger();
     return Logger.instance;
   }
 
