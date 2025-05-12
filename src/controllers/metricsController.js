@@ -22,7 +22,7 @@ export const getSystemMetrics = async (req, res) => {
 
   const getNvidiaInfo = async () => {
     try {
-      const { stdout } = await execAsync('nvitop --json');
+      const { stdout } = await execAsync('nvtop --json');
       return JSON.parse(stdout);
     } catch (error) {
       logger.error('Error fetching NVIDIA info', { message: error.message });
