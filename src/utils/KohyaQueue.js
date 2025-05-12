@@ -26,7 +26,7 @@ export class KohyaQueue {
 
   constructor() {
     this.queue = [];
-    this.interval = setInterval(this.#checkQueue, 1000);
+    this.interval = setInterval(this.#checkQueue.bind(this), 1000);
   }
 
   static getInstance() {
@@ -64,13 +64,19 @@ export class KohyaQueue {
   }
 
   async #checkQueue() {
-    if (!this.queue) return;
+    if (!Array.isArray(this.queue)) {
+      this.queue = [];
+      return;
+    }
+    
     if (this.queue.length === 0) {
       this.#status = QueueStatus.IDLE;
       return;
     }
 
     const task = this.queue.at(-1);
+    if (!task) return;
+    
     if (task.status === TaskStatus.PROCESSING) return;
     if (task.status === TaskStatus.COMPLETED) {
       logger.info(`Task ${task.id} completed`, { task });
