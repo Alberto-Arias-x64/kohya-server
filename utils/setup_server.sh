@@ -107,7 +107,7 @@ print_message "Downloading models..."
 mkdir -p /home/flux/models
 mkdir -p /home/flux/datasets
 cd /home/flux/models
-curl -L -O https://https://huggingface.co/OwlMaster/realgg/resolve/main/flux1-dev.safetensors
+curl -L -O https://huggingface.co/OwlMaster/realgg/resolve/main/flux1-dev.safetensors
 curl -L -O https://huggingface.co/OwlMaster/realgg/resolve/main/ae.safetensors
 curl -L -O https://huggingface.co/comfyanonymous/flux_text_encoders/resolve/main/clip_l.safetensors
 curl -L -O https://huggingface.co/comfyanonymous/flux_text_encoders/resolve/main/t5xxl_fp16.safetensors

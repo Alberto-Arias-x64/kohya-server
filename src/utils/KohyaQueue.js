@@ -108,7 +108,7 @@ export class KohyaQueue {
 
     const kohya = spawn(command, args);
 
-    kohya.stdout.on('data', (data) => {
+    kohya.stderr.on('data', (data) => {
       this.#log = data.toString();
     });
 
@@ -116,12 +116,14 @@ export class KohyaQueue {
       logger.error(`Task ${id} failed`, { error: error.message, stack: error.stack });
       task.status = TaskStatus.FAILED;
       task.updatedAt = new Date();
+      this.#log = error.message;
     });
 
     kohya.on('close', (code) => {
       logger.info(`Task ${id} closed with code ${code}`);
       task.status = TaskStatus.COMPLETED;
       task.updatedAt = new Date();
+      this.#log = 'Completed task';
     });
   }
 } 
