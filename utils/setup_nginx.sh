@@ -46,7 +46,7 @@ openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
 
 # Create Nginx configuration
 print_message "Creating Nginx configuration..."
-cp ./nginx.conf /etc/nginx/nginx.conf
+cp /home/flux/server/utils/nginx.conf /etc/nginx/nginx.conf
 
 # Verify Nginx configuration
 print_message "Verifying Nginx configuration..."

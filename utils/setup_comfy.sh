@@ -32,7 +32,7 @@ apt update && apt upgrade -y
 # Clone ComfyUI
 cd /home/flux
 print_message "Cloning ComfyUI..."
-git https://github.com/comfyanonymous/ComfyUI.git
+git clone https://github.com/comfyanonymous/ComfyUI.git
 
 
 # Activate virtual environment

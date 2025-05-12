@@ -42,7 +42,7 @@ sudo apt install python3-tk
 
 # Install dependencies
 print_message "Installing dependencies..."
-./gui-uv.sh --listen 127.0.0.1 --server_port 7860
+./gui-uv.sh --listen 127.0.0.1 --server_port 7860 &
 PID=$!
 
 # Wait for the server to start
