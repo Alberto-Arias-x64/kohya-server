@@ -125,6 +125,7 @@ export class KohyaQueue {
       logger.info(`Task ${id} closed with code ${code}`);
       task.status = TaskStatus.COMPLETED;
       task.updatedAt = new Date();
+      logger.info(`queue: ${this.queue.length}`);
       this.#log = 'Completed task';
     });
   }
