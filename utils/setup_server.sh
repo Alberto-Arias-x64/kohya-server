@@ -87,13 +87,13 @@ npm install
 
 # Setup ComfyUI
 print_message "Setting up ComfyUI..."
-chmod +x utils/setup_comfy.sh
-./utils/setup_comfy.sh
+chmod +x /home/flux/server/utils/setup_comfy.sh
+/home/flux/server/utils/setup_comfy.sh
 
 # Setup Kohya
 print_message "Setting up Kohya..."
-chmod +x utils/setup_kohya.sh
-./utils/setup_kohya.sh
+chmod +x /home/flux/server/utils/setup_kohya.sh
+/home/flux/server/utils/setup_kohya.sh
 
 # Setup Nginx
 print_message "Setting up Nginx..."

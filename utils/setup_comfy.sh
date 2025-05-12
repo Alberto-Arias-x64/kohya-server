@@ -30,8 +30,9 @@ print_message "Updating system..."
 apt update && apt upgrade -y
 
 # Clone ComfyUI
+cd /home/flux
 print_message "Cloning ComfyUI..."
-git clone https://github.com/ComfyUI/ComfyUI.git
+git https://github.com/comfyanonymous/ComfyUI.git
 
 
 # Activate virtual environment

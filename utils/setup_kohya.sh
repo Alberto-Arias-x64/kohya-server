@@ -30,6 +30,7 @@ print_message "Updating system..."
 apt update && apt upgrade -y
 
 # Clone Kohya
+cd /home/flux
 print_message "Cloning Kohya..."
 git clone --recursive https://github.com/bmaltais/kohya_ss.git
 
