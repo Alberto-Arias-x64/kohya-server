@@ -50,7 +50,6 @@ export class KohyaQueue {
     return {
       status: task.status,
       position: position,
-      log: this.#log
     };
   }
 
@@ -125,7 +124,7 @@ export class KohyaQueue {
       logger.info(`Task ${id} closed with code ${code}`);
       task.status = TaskStatus.COMPLETED;
       task.updatedAt = new Date();
-      logger.info(`queue: ${this.queue.length}`);
+      logger.info(`queue: ${this.queue}`);
       this.#log = 'Completed task';
     });
   }

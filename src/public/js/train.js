@@ -69,7 +69,7 @@ function updateQueueStatus(status, queue, currentTask, log) {
     queueStatusValue.style.color = '#3B82F6'; // blue
   }
 
-  if (log) taskLogElement.textContent = log;
+  if (log) taskLogElement.innerHTML = `<span style='font-size:0.8em;color:#888;'>${log}</span>`;
 }
 
 function showQueueError() {
@@ -138,7 +138,7 @@ async function checkTask() {
     if (!response.ok) throw new Error('Failed to check task status');
     
     const data = await response.json();
-    trainingStatus.innerHTML = `Current task status: ${data.info.status}<br><span style='font-size:0.9em;color:#888;'>${data.info.log || ''}</span>`;
+    trainingStatus.innerHTML = `Current task status: ${data.info.status}`;
     
     if (data.info.status === 'COMPLETED' || data.info.status === 'FAILED') {
       clearInterval(pollingInterval);
