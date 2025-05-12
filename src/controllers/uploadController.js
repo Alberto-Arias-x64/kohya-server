@@ -5,6 +5,7 @@ import uuid from 'short-uuid';
 import fs from 'fs/promises';
 import { join } from 'path';
 import sharp from 'sharp';
+import { spawn } from 'child_process';
 
 const logger = Logger.getInstance();
 
@@ -32,8 +33,6 @@ export const uploadImages = (req, res) => {
             .resize(1024, 1024, { fit: 'cover' })
             .png()
             .toFile(join(inputDir, `${index + 1}.png`));
-          await fs.writeFile(join(inputDir, `${index + 1}.txt`), id, 'utf8');
-          //await fs.unlink(file.filepath);
           logger.info('Processed image', { id, index: index + 1 });
         } catch (err) {
           logger.error(`Error processing image`, { error: err.message, stack: err.stack, id });
@@ -41,7 +40,46 @@ export const uploadImages = (req, res) => {
       });
 
       await Promise.all(processPromises);
-      return res.json({ id });
+
+      const captionCommand = '/home/flux/kohya_ss/.venv/bin/python3';
+      const captionArgs = [
+        '/home/flux/kohya_ss/sd-scripts/finetune/make_captions.py',
+        '--batch_size', '1',
+        '--num_beams', '1',
+        '--top_p', '0.9',
+        '--max_length', '20',
+        '--min_length', '5',
+        '--beam_search',
+        '--caption_extension', '.txt',
+        inputDir,
+        '--caption_weights', 'https://storage.googleapis.com/sfr-vision-language-research/BLIP/models/model_large_caption.pth'
+      ];
+
+      const captionProcess = spawn(captionCommand, captionArgs);
+
+      captionProcess.on('error', (error) => {
+        logger.error('Error generating captions:', { error: error.message, stack: error.stack });
+      });
+
+      captionProcess.on('close', async (code) => {
+        logger.info(`Caption generation completed with code ${code}`);
+        
+        try {
+          const files = await fs.readdir(inputDir);
+          const txtFiles = files.filter(file => file.endsWith('.txt'));
+          
+          for (const txtFile of txtFiles) {
+            const filePath = join(inputDir, txtFile);
+            const content = await fs.readFile(filePath, 'utf-8');
+            const newContent = `${id} ${content}`;
+            await fs.writeFile(filePath, newContent, 'utf-8');
+          }
+        } catch (error) {
+          logger.error('Error updating caption files:', { error: error.message, stack: error.stack });
+        }
+        
+        return res.json({ id });
+      });
     });
   } catch (error) {
     logger.error("Error uploading images", { error: error.message, stack: error.stack });

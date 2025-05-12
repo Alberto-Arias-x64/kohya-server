@@ -9,7 +9,7 @@ import { join } from 'path';
 const logger = Logger.getInstance();
 const app = express();
 
-app.use(securityMiddleware);
+// app.use(securityMiddleware);
 app.use(express.json({ limit: config.maxFileSize, extended: true }));
 app.use(express.static(join(paths.basePath, 'public')));
 app.use(requestLogger, routes);
