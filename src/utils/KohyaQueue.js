@@ -113,6 +113,7 @@ export class KohyaQueue {
     ];
 
     const kohya = spawn(command, args);
+    this.#log = 'Starting task ' + id;
 
     kohya.stderr.on('data', (data) => {
       console.log(data.toString());
