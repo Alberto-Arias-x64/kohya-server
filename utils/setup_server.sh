@@ -68,7 +68,9 @@ nvm install 22
 
 ## Install Cuda
 print_message "Installing Cuda..."
-sudo apt-get install -y cuda-drivers
+sudo apt install ubuntu-drivers-common -y
+ubuntu-drivers devices
+sudo ubuntu-drivers autoinstall
 wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-keyring_1.1-1_all.deb
 sudo dpkg -i cuda-keyring_1.1-1_all.deb
 sudo apt-get update
