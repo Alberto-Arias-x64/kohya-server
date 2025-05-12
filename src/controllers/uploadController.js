@@ -55,7 +55,9 @@ export const uploadImages = (req, res) => {
         '--caption_weights', 'https://storage.googleapis.com/sfr-vision-language-research/BLIP/models/model_large_caption.pth'
       ];
 
-      const captionProcess = spawn(captionCommand, captionArgs);
+      const captionProcess = spawn(captionCommand, captionArgs, {
+        cwd: '/home/flux/kohya_ss/sd-scripts',
+      });
 
       captionProcess.on('error', (error) => {
         logger.error('Error generating captions:', { error: error.message, stack: error.stack });

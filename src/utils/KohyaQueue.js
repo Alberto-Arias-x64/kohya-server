@@ -116,7 +116,6 @@ export class KohyaQueue {
     this.#log = 'Starting task ' + id;
 
     kohya.stderr.on('data', (data) => {
-      console.log(data.toString());
       this.#log = data.toString().split('\n').at(-1);
     });
 
