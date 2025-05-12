@@ -77,6 +77,7 @@ fi
 
 # Enable firewall
 print_message "Enabling firewall..."
+ufw allow ssh
 ufw allow 'Nginx Full'
 ufw enable
 sudo ufw status

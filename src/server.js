@@ -10,12 +10,12 @@ const logger = Logger.getInstance();
 const app = express();
 
 app.use(securityMiddleware);
-app.use(requestLogger);
 app.use(express.json({ limit: config.maxFileSize, extended: true }));
 app.use(express.static(join(paths.basePath, 'public')));
-app.use(routes);
+app.use(requestLogger, routes);
 
 app.listen(config.port, () => {
   console.log(`Server is running on http://localhost:${config.port}`);
-  logger.info(`Server started on port ${config.port}`).catch(console.error);
+  logger.info(`Server started on port ${config.port}`);
 });
+ 
