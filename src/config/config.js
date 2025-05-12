@@ -8,7 +8,7 @@ const basePath = join(__dirname, '..');
 export const config = {
   port: process.env.PORT || 3000,
   rateLimit: {
-    windowMs: 15 * 60 * 1000,
+    windowMs: 1 * 60 * 1000,
     max: 100
   },
   maxFileSize: 10 * 1024 * 1024, // 10MB
