@@ -38,7 +38,8 @@ export class KohyaQueue {
     return {
       status: this.#status,
       queue: this.queue.length || 0,
-      currentTask: this.queue.at(-1)?.id || null
+      currentTask: this.queue.at(-1)?.id || null,
+      log: this.#log
     };
   }
 

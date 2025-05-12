@@ -5,7 +5,17 @@ import cors from 'cors';
 
 export const securityMiddleware = [
   helmet(),
-  cors(),
+  cors({
+    origin: (origin, cb) =>{
+      if (!origin) return cb(null, true);
+      if (config.allowedOrigins.includes(origin)) {
+        return cb(null, true);
+      } else {
+        return cb('Not allowed');
+      }
+    },
+    credentials: true
+  }),
   rateLimit({
     windowMs: config.rateLimit.windowMs,
     max: config.rateLimit.max,

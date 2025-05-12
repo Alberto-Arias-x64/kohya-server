@@ -245,3 +245,9 @@ button:disabled {
   color: var(--blue-500-color);
   background-color: transparent;
 }
+#task-log {
+  font-size: 0.9rem;
+  color: var(--text-color);
+  line-height: 1.6;
+}
+

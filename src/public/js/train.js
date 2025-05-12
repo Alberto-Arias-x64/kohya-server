@@ -1,5 +1,5 @@
 const MAX_FILES = 10;
-const POLLING_INTERVAL = 5000; // 5 seconds
+const POLLING_INTERVAL = 20000; // 20 seconds
 
 const trainButton = document.getElementById('train-button');
 const clearButton = document.getElementById('clear-button');
@@ -10,7 +10,7 @@ const queueStatusValue = document.getElementById('queue-status-value');
 const queuePendingTasks = document.getElementById('queue-pending-tasks');
 const queueCurrentTask = document.getElementById('queue-current-task');
 const taskIdElement = document.getElementById('task-id');
-
+const taskLogElement = document.getElementById('task-log');
 let trainingId = null;
 let pollingInterval = null;
 let eventSource = null;
@@ -53,7 +53,7 @@ function updateButtonState() {
   trainButton.disabled = fileInput.files.length === 0;
 }
 
-function updateQueueStatus(status, queue, currentTask) {
+function updateQueueStatus(status, queue, currentTask, log) {
   queueStatusValue.textContent = status;
   queuePendingTasks.textContent = queue;
   queueCurrentTask.textContent = currentTask || 'None';
@@ -68,6 +68,8 @@ function updateQueueStatus(status, queue, currentTask) {
   } else {
     queueStatusValue.style.color = '#3B82F6'; // blue
   }
+
+  if (log) taskLogElement.textContent = log;
 }
 
 function showQueueError() {
@@ -96,7 +98,7 @@ function listenQueueStatus() {
   
   eventSource.onmessage = (event) => {
     const data = JSON.parse(event.data);
-    updateQueueStatus(data.status, data.queue, data.currentTask);
+    updateQueueStatus(data.status, data.queue, data.currentTask, data.log);
     
     // Reset reconnect attempts on successful connection
     reconnectAttempts = 0;
@@ -116,6 +118,7 @@ function listenQueueStatus() {
       console.error('Max reconnection attempts reached');
       showQueueError();
       queueCurrentTask.textContent = 'Please refresh the page to reconnect';
+      clearInterval(pollingInterval);
     }
   };
 }

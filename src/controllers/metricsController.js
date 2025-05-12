@@ -8,14 +8,9 @@ const execAsync = promisify(exec);
 const logger = Logger.getInstance();
 
 export const getSystemMetrics = async (req, res) => {
-  const allowedOrigins = config.allowedOrigins;
-  const origin = req.headers.origin;
-
   res.setHeader('Content-Type', 'text/event-stream');
   res.setHeader('Cache-Control', 'no-cache');
   res.setHeader('Connection', 'keep-alive');
-
-  if (allowedOrigins.includes(origin)) res.setHeader('Access-Control-Allow-Origin', origin);
 
   let isClientConnected = true;
   let interval;
