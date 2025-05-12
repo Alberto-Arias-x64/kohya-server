@@ -22,8 +22,42 @@ export const getSystemMetrics = async (req, res) => {
 
   const getNvidiaInfo = async () => {
     try {
-      const { stdout } = await execAsync('nvtop --json');
-      return JSON.parse(stdout);
+      const query = [
+        'utilization.gpu',
+        'memory.total',
+        'memory.used',
+        'memory.free',
+        'temperature.gpu',
+        'power.draw',
+        'fan.speed'
+      ].join(',');
+
+      const { stdout } = await execAsync(`nvidia-smi --query-gpu=${query} --format=csv,noheader,nounits`);
+
+      const gpus = stdout.trim().split('\n').map(line => {
+        const [
+          gpu_util,
+          memory_total,
+          memory_used,
+          memory_free,
+          temperature,
+          power_draw,
+          fan_speed
+        ] = line.split(',').map(v => v.trim());
+
+        return {
+          gpu_util: Number(gpu_util),
+          memory_total: Number(memory_total),
+          memory_used: Number(memory_used),
+          memory_free: Number(memory_free),
+          temperature: Number(temperature),
+          power_draw: Number(power_draw),
+          fan_speed: Number(fan_speed),
+          processes: [] // opcional, puedes mejorar esto con nvidia-smi pmon
+        };
+      });
+
+      return { gpus };
     } catch (error) {
       logger.error('Error fetching NVIDIA info', { message: error.message });
       return null;
@@ -70,11 +104,11 @@ export const getSystemMetrics = async (req, res) => {
             model: gpu.model,
             vram: gpu.vram ? (gpu.vram / 1024).toFixed(2) : 'N/A',
             temperature: nvidiaGpu.temperature || gpu.temperatureGpu || 'N/A',
-            load: nvidiaGpu.gpu_util || gpuLoad[index]?.load || 'N/A',
-            memoryUsed: nvidiaGpu.memory_used || gpuLoad[index]?.memoryUsed || 'N/A',
-            memoryTotal: nvidiaGpu.memory_total || gpuLoad[index]?.memoryTotal || 'N/A',
-            powerDraw: nvidiaGpu.power_draw || gpuLoad[index]?.powerDraw || 'N/A',
-            fanSpeed: nvidiaGpu.fan_speed || gpuLoad[index]?.fanSpeed || 'N/A',
+            load: nvidiaGpu.gpu_util ?? gpuLoad[index]?.load ?? 'N/A',
+            memoryUsed: nvidiaGpu.memory_used ?? 'N/A',
+            memoryTotal: nvidiaGpu.memory_total ?? 'N/A',
+            powerDraw: nvidiaGpu.power_draw ?? 'N/A',
+            fanSpeed: nvidiaGpu.fan_speed ?? 'N/A',
             processes: nvidiaGpu.processes || []
           };
         })
@@ -87,21 +121,16 @@ export const getSystemMetrics = async (req, res) => {
     }
   };
 
-  // Send initial metrics
   await sendMetrics();
-
-  // Set up interval for continuous updates
   interval = setInterval(sendMetrics, 2000);
 
-  // Handle client disconnect
   req.on('close', () => {
     isClientConnected = false;
     clearInterval(interval);
   });
 
-  // Handle client errors
   req.on('error', (error) => {
     isClientConnected = false;
     clearInterval(interval);
   });
-}; 
+};
