@@ -110,6 +110,7 @@ export class KohyaQueue {
     const kohya = spawn(command, args);
 
     kohya.stderr.on('data', (data) => {
+      console.log(data.toString());
       this.#log = data.toString().split('\n').at(-1);
     });
 
