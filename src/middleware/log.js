@@ -3,8 +3,14 @@ import uuid from 'short-uuid'
 
 const logger = Logger.getInstance();
 
+const NoLogRoutes = [
+  '/api/kohya/status',
+  '/api/kohya/taskInfo',
+  '/api/metrics',
+]
+
 export const requestLogger = async (req, res, next) => {
-  if (req.url.includes('/api/kohya/taskInfo')) return next();
+  if (NoLogRoutes.includes(req.url)) return next();
   const startTime = Date.now();
   const requestId = uuid.generate();
 
