@@ -1,17 +1,13 @@
-let eventSource;
-let reconnectAttempts = 0;
-const maxReconnectAttempts = 5;
-const reconnectDelay = 3000;
+let pollingInterval;
+const POLLING_INTERVAL = 30000;
 
-function connectSSE() {
-  if (eventSource) {
-    eventSource.close();
-  }
-
-  eventSource = new EventSource('/api/metrics');
-
-  eventSource.onmessage = (event) => {
-    const metrics = JSON.parse(event.data);
+async function fetchMetrics() {
+  try {
+    const response = await fetch('/api/metrics');
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const metrics = await response.json();
 
     // Update CPU metrics
     document.getElementById('cpu-usage').textContent = `${metrics.cpu.usage}%`;
@@ -28,53 +24,34 @@ function connectSSE() {
 
     // Update GPU metrics
     const gpuHtml = metrics.gpu.map(gpu => `
-              <div class="gpu-card">
-                  <strong>${gpu.model}</strong>
-                  <div class="gpu-metrics">
-                      <div>Load: ${gpu.load}%</div>
-                      <div>Temperature: ${gpu.temperature}°C</div>
-                      <div>VRAM: ${gpu.vram} GB</div>
-                      <div>Memory Used: ${gpu.memoryUsed} MB</div>
-                      <div>Memory Total: ${gpu.memoryTotal} MB</div>
-                      <div>Power Draw: ${gpu.powerDraw} W</div>
-                      <div>Fan Speed: ${gpu.fanSpeed}%</div>
-                  </div>
-              </div>
-          `).join('');
+      <div class="gpu-card">
+        <strong>${gpu.model}</strong>
+        <div class="gpu-metrics">
+          <div>Load: ${gpu.load}%</div>
+          <div>Temperature: ${gpu.temperature}°C</div>
+          <div>VRAM: ${gpu.vram} GB</div>
+          <div>Memory Used: ${gpu.memoryUsed} MB</div>
+          <div>Memory Total: ${gpu.memoryTotal} MB</div>
+          <div>Power Draw: ${gpu.powerDraw} W</div>
+          <div>Fan Speed: ${gpu.fanSpeed}%</div>
+        </div>
+      </div>
+    `).join('');
     document.getElementById('gpu-info').innerHTML = gpuHtml;
 
-    // Reset reconnect attempts on successful connection
-    reconnectAttempts = 0;
-  };
-
-  eventSource.onerror = (error) => {
-    console.error('SSE Error:', error);
-    eventSource.close();
-
-    // Attempt to reconnect if under max attempts
-    if (reconnectAttempts < maxReconnectAttempts) {
-      reconnectAttempts++;
-      console.log(`Attempting to reconnect (${reconnectAttempts}/${maxReconnectAttempts})...`);
-      setTimeout(connectSSE, reconnectDelay);
-    } else {
-      console.error('Max reconnection attempts reached');
-      document.getElementById('gpu-info').innerHTML = `
-            <div class="error-message">
-                Connection lost. Please refresh the page to reconnect.
-            </div>
-        `;
-    }
-  };
+  } catch (error) {
+    console.error('Error fetching metrics:', error);
+    document.getElementById('gpu-info').innerHTML = `
+      <div class="error-message">
+        Error fetching metrics. Will retry in ${POLLING_INTERVAL/1000} seconds.
+      </div>
+    `;
+  }
 }
 
-// Initial connection
-connectSSE();
+function startPolling() {
+  fetchMetrics();
+  pollingInterval = setInterval(fetchMetrics, POLLING_INTERVAL);
+}
 
-// Handle page visibility changes
-document.addEventListener('visibilitychange', () => {
-  if (document.visibilityState === 'visible') {
-    // Reconnect when page becomes visible again
-    reconnectAttempts = 0;
-    connectSSE();
-  }
-});
+startPolling();

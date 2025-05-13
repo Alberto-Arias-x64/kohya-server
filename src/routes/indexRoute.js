@@ -13,4 +13,8 @@ router.use('/api', comfyRoutes);
 router.use('/api', kohyaRoutes);
 router.use('/api', uploadRoutes);
 
+router.use('**', (_req, res) => {
+  res.status(404).json({ error: 'Not found' });
+});
+
 export default router;

@@ -226,15 +226,6 @@ document.getElementById('train-form').addEventListener('submit', async (e) => {
   }
 });
 
-// Handle page visibility changes
-document.addEventListener('visibilitychange', () => {
-  if (document.visibilityState === 'visible') {
-    // Reconnect when page becomes visible again
-    reconnectAttempts = 0;
-    listenQueueStatus();
-  }
-});
-
 // Initial connection
 listenQueueStatus();
 
