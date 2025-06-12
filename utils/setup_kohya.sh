@@ -46,10 +46,14 @@ print_message "Installing dependencies..."
 PID=$!
 
 # Wait for the server to start
-print_message "Waiting for the server to start..."
-while ! curl -s http://127.0.0.1:7860 > /dev/null; do
-    sleep 1
-done
+# print_message "Waiting for the server to start..."
+# while ! curl -s http://127.0.0.1:7860 > /dev/null; do
+#     sleep 1
+# done
+
+# wait for the server to be ready
+print_message "Waiting for the server to be ready..."
+sleep 90
 
 # Kill the server
 print_message "Killing the server..."
