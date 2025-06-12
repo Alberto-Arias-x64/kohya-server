@@ -33,6 +33,14 @@ apt update && apt upgrade -y
 print_message "Installing curl..."
 apt install -y curl
 
+# Install unzip
+print_message "Installing unzip..."
+apt install -y unzip
+
+# Install git
+print_message "Installing git..."
+apt install -y git
+
 # Download and install pyenv
 print_message "Downloading and installing pyenv..."
 curl -fsSL https://pyenv.run | bash
@@ -67,9 +75,13 @@ pyenv install 3.12
 
 # Install node
 print_message "Installing node..."
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
-\. "$HOME/.nvm/nvm.sh"
-nvm install 22
+curl -o- https://fnm.vercel.app/install | bash
+FNM_PATH="/root/.local/share/fnm"
+if [ -d "$FNM_PATH" ]; then
+  export PATH="$FNM_PATH:$PATH"
+  eval "`fnm env`"
+fi
+fnm install 22
 
 ## Install Cuda
 print_message "Installing Cuda..."
@@ -88,7 +100,7 @@ cd /home/flux
 
 # Install Server
 print_message "Installing Server..."
-git clone https://github.com/Alberto-Arias-x64/server-template server
+git clone https://github.com/Alberto-Arias-x64/kohya-server.git server
 cd server
 npm install
 
