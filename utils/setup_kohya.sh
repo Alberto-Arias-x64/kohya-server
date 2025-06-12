@@ -40,20 +40,27 @@ pyenv shell 3.10.9
 sudo apt install python3-venv
 sudo apt install python3-tk
 
+#install cuda
+wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2404/x86_64/cuda-keyring_1.1-1_all.deb
+dpkg -i cuda-keyring_1.1-1_all.deb
+apt-get update
+apt-get -y install cuda-toolkit-12-8
+apt-get install -y cuda-drivers
+
 # Install dependencies
 print_message "Installing dependencies..."
-./gui-uv.sh --listen 127.0.0.1 --server_port 7860 &
+printf 'y' | ./gui-uv.sh --listen 127.0.0.1 --server_port 7860 &
 PID=$!
 
 # Wait for the server to start
-# print_message "Waiting for the server to start..."
-# while ! curl -s http://127.0.0.1:7860 > /dev/null; do
-#     sleep 1
-# done
+print_message "Waiting for the server to start..."
+while ! curl -s http://127.0.0.1:7860 > /dev/null; do
+    sleep 1
+done
 
 # wait for the server to be ready
-print_message "Waiting for the server to be ready..."
-sleep 90
+# print_message "Waiting for the server to be ready..."
+# sleep 90
 
 # Kill the server
 print_message "Killing the server..."
