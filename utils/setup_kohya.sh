@@ -45,7 +45,9 @@ wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2404/x86_64/
 dpkg -i cuda-keyring_1.1-1_all.deb
 apt-get update
 apt-get -y install cuda-toolkit-12-8
-apt-get install -y cuda-drivers
+
+apt install ubuntu-drivers-common -y
+ubuntu-drivers autoinstall
 
 # Install dependencies
 print_message "Installing dependencies..."
