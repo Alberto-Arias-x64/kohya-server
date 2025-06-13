@@ -100,6 +100,7 @@ cd /home/flux
 
 # Install Server
 print_message "Installing Server..."
+# CHANGE THIS URL
 git clone https://github.com/Alberto-Arias-x64/kohya-server.git server
 cd /home/flux/server
 npm install
