@@ -44,7 +44,7 @@ sudo apt install python3-tk
 wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2404/x86_64/cuda-keyring_1.1-1_all.deb
 dpkg -i cuda-keyring_1.1-1_all.deb
 apt-get update
-apt-get -y install cuda-toolkit-12-4
+apt-get -y install cuda-toolkit-12-9
 
 apt install -y ubuntu-drivers-common
 ubuntu-drivers autoinstall
