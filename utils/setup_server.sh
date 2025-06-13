@@ -140,7 +140,7 @@ mv /home/flux/models/flux1-dev-fp8.safetensors /home/flux/ComfyUI/models/checkpo
 
 #  Install Nvtop
 print_message "Installing Nvtop..."
-sudo apt install nvtop
+apt install nvtop
 
 print_message "Installation complete!"
 print_warning "Please reboot your system."
