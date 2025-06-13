@@ -36,7 +36,7 @@ git clone https://github.com/comfyanonymous/ComfyUI.git
 cd /home/flux/ComfyUI
 
 pyenv shell 3.12
-apt install python3-venv
+apt install python3-venv -y
 print_message "Creating virtual environment..."
 python3 -m venv .venv
 print_message "Activating virtual environment..."

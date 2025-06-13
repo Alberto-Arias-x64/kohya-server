@@ -121,9 +121,9 @@ chmod +x /home/flux/server/utils/setup_kohya.sh
 /home/flux/server/utils/setup_kohya.sh
 
 # Setup Nginx
-print_message "Setting up Nginx..."
-chmod +x /home/flux/server/utils/setup_nginx.sh
-/home/flux/server/utils/setup_nginx.sh
+# print_message "Setting up Nginx..."
+# chmod +x /home/flux/server/utils/setup_nginx.sh
+# /home/flux/server/utils/setup_nginx.sh
 
 # Download models
 print_message "Downloading models..."

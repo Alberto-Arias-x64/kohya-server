@@ -31,6 +31,6 @@ Once the script has finished running, the pod must be restarted through the runp
 pm2 start /home/flux/server/utils/ecosystem.config.json
 pm2 logs
 ```
-* Kohya server is running on port 7865
-* ComfyUI is running on port 7860
+* Kohya server is running on port 7860
+* ComfyUI is running on port 8188
 * Training server is running on port 3000
