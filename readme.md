@@ -24,7 +24,7 @@ source setup.sh
 ```
 
 ### Notes
-* If the instalation was stuked on `Processing triggers for libc-bin (2.39-0ubuntu8.4)` pleace stop the execution of this sctipt whit this command `Ctrl + C` and run it again.
+* If the instalation was stuck on `Processing triggers for libc-bin (2.39-0ubuntu8.4)` pleace stop the execution of this sctipt whit this command `Ctrl + C` and run it again.
 
 ### 3. Await the restart of the server and reconnect
 Once the script has finished running, the pod must be restarted through the runpod interface to apply the changes to the controllers.
