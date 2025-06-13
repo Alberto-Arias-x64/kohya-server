@@ -46,9 +46,6 @@ dpkg -i cuda-keyring_1.1-1_all.deb
 apt-get update
 apt-get -y install cuda-toolkit-12-8
 
-apt install ubuntu-drivers-common -y
-ubuntu-drivers autoinstall
-
 # Install dependencies
 print_message "Installing dependencies..."
 printf 'y' | ./gui-uv.sh --listen 127.0.0.1 --server_port 7860 &
@@ -59,10 +56,6 @@ print_message "Waiting for the server to start..."
 while ! curl -s http://127.0.0.1:7860 > /dev/null; do
     sleep 1
 done
-
-# wait for the server to be ready
-# print_message "Waiting for the server to be ready..."
-# sleep 90
 
 # Kill the server
 print_message "Killing the server..."

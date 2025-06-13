@@ -66,9 +66,9 @@ if [ $? -eq 0 ]; then
     systemctl is-active nginx
 
     print_message "Installation completed successfully!"
-    print_message "Your Express server is now available at:"
-    print_message "HTTP: http://localhost"
-    print_message "HTTPS: https://localhost"
+    # print_message "Your Express server is now available at:"
+    # print_message "HTTP: http://localhost"
+    # print_message "HTTPS: https://localhost"
     print_warning "Note: Since you're using self-signed certificates, the browser will show a security warning."
 else
     print_error "Nginx configuration has errors. Please check the logs."

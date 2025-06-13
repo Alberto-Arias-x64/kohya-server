@@ -1,0 +1,20 @@
+{
+  "apps": [
+    {
+      "name": "server",
+      "script": "src/server.js",
+      "cwd": "/home/flux/server"
+    },
+    {
+      "name": "comfy",
+      "script": "main.py",
+      "cwd": "/home/flux/ComfyUI",
+      "interpreter": "/home/flux/ComfyUI/.venv/bin/python"
+    },
+    {
+      "name": "kohya",
+      "script": "printf 'y' | ./gui-uv.sh --listen 127.0.0.1 --server_port 7865",
+      "cwd": "/home/flux/kohya_ss"
+    }
+  ]
+}

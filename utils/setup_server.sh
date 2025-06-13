@@ -130,10 +130,13 @@ curl -L -O https://huggingface.co/comfyanonymous/flux_text_encoders/resolve/main
 curl -L -O https://huggingface.co/comfyanonymous/flux_text_encoders/resolve/main/t5xxl_fp16.safetensors
 curl -L -O https://huggingface.co/Comfy-Org/flux1-dev/resolve/main/flux1-dev-fp8.safetensors
 
+mv /home/flux/models/flux1-dev-fp8.safetensors /home/flux/comfy/models/checkpoints
+
 #  Install Nvtop
 print_message "Installing Nvtop..."
 sudo apt install nvtop
 
-
-print_warning "Please reboot your system."
 print_message "Installation complete!"
+print_warning "Rebooting your system."
+
+reboot
