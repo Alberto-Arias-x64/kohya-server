@@ -37,8 +37,8 @@ git clone --recursive https://github.com/bmaltais/kohya_ss.git
 # Activate virtual environment
 cd kohya_ss
 pyenv shell 3.10.9
-sudo apt install python3-venv
-sudo apt install python3-tk
+apt install python3-venv
+apt install python3-tk
 
 #install cuda
 wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2404/x86_64/cuda-keyring_1.1-1_all.deb

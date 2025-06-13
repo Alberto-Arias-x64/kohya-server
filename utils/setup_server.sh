@@ -62,7 +62,7 @@ echo 'eval "$(pyenv init - bash)"' >> ~/.bash_profile
 
 print_message "restarting shell..."
 #exec "$SHELL"
-sudo apt install -y \
+apt install -y \
   make build-essential libssl-dev zlib1g-dev \
   libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm \
   libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev \
@@ -90,13 +90,13 @@ pm2 completion install
 
 ## Install Cuda
 print_message "Installing Cuda..."
-sudo apt install ubuntu-drivers-common -y
+apt install ubuntu-drivers-common -y
 ubuntu-drivers devices
-sudo ubuntu-drivers autoinstall
+ubuntu-drivers autoinstall
 wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-keyring_1.1-1_all.deb
-sudo dpkg -i cuda-keyring_1.1-1_all.deb
-sudo apt-get update
-sudo apt-get -y install cuda-toolkit-12-4
+dpkg -i cuda-keyring_1.1-1_all.deb
+apt-get update
+apt-get -y install cuda-toolkit-12-4
 
 # Create working directory
 print_message "Creating working directory..."
