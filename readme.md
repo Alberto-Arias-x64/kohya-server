@@ -24,7 +24,7 @@ source setup.sh
 ```
 
 ### 3. Await the restart of the server and reconnect
-Once the script is finished running, the pod will automatically restart to apply the changes to the drivers.
+Once the script has finished running, the pod must be restarted through the runpod interface to apply the changes to the controllers.
 
 ### 4. Start server
 ``` bash

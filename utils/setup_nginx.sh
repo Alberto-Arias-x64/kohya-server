@@ -28,6 +28,7 @@ fi
 # Update system
 print_message "Updating system..."
 apt update && apt upgrade -y
+apt install ufw -y
 
 # Install Nginx
 print_message "Installing Nginx..."
@@ -80,7 +81,7 @@ print_message "Enabling firewall..."
 ufw allow ssh
 ufw allow 'Nginx Full'
 ufw enable
-sudo ufw status
+ufw status
 
 # Show port information
 print_message "Checking used ports..."

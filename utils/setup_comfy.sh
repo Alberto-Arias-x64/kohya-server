@@ -30,15 +30,13 @@ print_message "Updating system..."
 apt update && apt upgrade -y
 
 # Clone ComfyUI
-cd /home/flux
 print_message "Cloning ComfyUI..."
+cd /home/flux
 git clone https://github.com/comfyanonymous/ComfyUI.git
+cd /home/flux/ComfyUI
 
-
-# Activate virtual environment
-cd ComfyUI
 pyenv shell 3.12
-sudo apt install python3-venv
+apt install python3-venv
 print_message "Creating virtual environment..."
 python3 -m venv .venv
 print_message "Activating virtual environment..."
@@ -48,8 +46,6 @@ source .venv/bin/activate
 print_message "Installing dependencies..."
 pip3 install -r requirements.txt
 pip3 install --pre torch torchvision torchaudio --index-url https://download.pytorch.org/whl/nightly/cu128
-cd custom_nodes
-git clone https://github.com/ltdrdata/ComfyUI-Manager comfyui-manager
 
 deactivate
 

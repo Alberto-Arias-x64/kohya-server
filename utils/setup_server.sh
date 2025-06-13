@@ -83,6 +83,11 @@ if [ -d "$FNM_PATH" ]; then
 fi
 fnm install 22
 
+#install pm2
+print_message "Installing pm2..."
+npm install pm2 -g
+pm2 completion install
+
 ## Install Cuda
 print_message "Installing Cuda..."
 sudo apt install ubuntu-drivers-common -y
@@ -131,13 +136,11 @@ curl -L -O https://huggingface.co/comfyanonymous/flux_text_encoders/resolve/main
 curl -L -O https://huggingface.co/comfyanonymous/flux_text_encoders/resolve/main/t5xxl_fp16.safetensors
 curl -L -O https://huggingface.co/Comfy-Org/flux1-dev/resolve/main/flux1-dev-fp8.safetensors
 
-mv /home/flux/models/flux1-dev-fp8.safetensors /home/flux/comfy/models/checkpoints
+mv /home/flux/models/flux1-dev-fp8.safetensors /home/flux/ComfyUI/models/checkpoints
 
 #  Install Nvtop
 print_message "Installing Nvtop..."
 sudo apt install nvtop
 
 print_message "Installation complete!"
-print_warning "Rebooting your system."
-
-reboot
+print_warning "Please reboot your system."
